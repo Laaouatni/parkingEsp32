@@ -1,4 +1,9 @@
 #include <Arduino.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
+#include <WiFi.h>
+
+AsyncWebSocket ws("/ws");
 
 // put function declarations here:
 int myFunction(int, int);
