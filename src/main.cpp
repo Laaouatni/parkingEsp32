@@ -3,6 +3,7 @@
 #include <ESPAsyncWebServer.h>
 #include <WiFi.h>
 
+AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 String         completeWsString = "";
 
@@ -17,6 +18,7 @@ void setup() {
                 uint8_t *data, size_t len) {
     const bool hasData = type == WS_EVT_DATA;
     if (!hasData) { return; }
+    
     AwsFrameInfo *info                     = (AwsFrameInfo *) arg;
     const String  thisWsReceivedStringData = String((char *) data).substring(0, len);
     completeWsString += thisWsReceivedStringData;
@@ -25,35 +27,10 @@ void setup() {
     ws.textAll(completeWsString);
 
     completeWsString = "";
-
-    //   const bool isConnecting    = type ==
-    //   WS_EVT_CONNECT; const bool isDisconnecting = type
-    //   == WS_EVT_DISCONNECT; const bool hasData         =
-    //   type == WS_EVT_DATA;
-
-    //   if (isConnecting) {
-    //     Serial.println(
-    //       "WebSocket Client Connected! IP Address: " +
-    //       client->remoteIP().toString());
-    //   }
-    //   if (isDisconnecting) {
-    //     Serial.println(
-    //       "WebSocket Client Disconnected! IP Address: " +
-    //       client->remoteIP().toString());
-    //   }
-
-    //   if (!hasData) { return; }
-
-    //   const String thisStringData =
-    //     String((char *) data).substring(0, len);
-
-    //   ws.textAll(thisStringData);
-    //   Serial2.println(thisStringData);
-    //   Serial.println("⬅️ ho ricevuto dal CLIENT un
-    //   messaggio "
-    //                  "e ➡️ inoltrato ai altri: " +
-    //                  String(thisStringData));
   });
+
+  server.addHandler(&ws);
+  server.begin();
 }
 
 void loop() {}
