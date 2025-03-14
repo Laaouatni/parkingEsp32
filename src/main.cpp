@@ -44,6 +44,8 @@ void setup() {
 
     const String thisCompleteWsString = mapCompleteWsStrings[thisClientID];
     ws.textAll(thisCompleteWsString);
+
+    mapCompleteWsStrings[thisClientID] = "";
   });
 
   server.addHandler(&ws);
