@@ -7,20 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- <script src="https://docs.opencv.org/4.11.0/opencv.js"></script> -->
   </head>
-  <body class="p-2 grid">
+  <body class="p-2 grid gap-4">
     <video id="videoElement" class="w-full" autoplay></video>
-    <canvas id="canvasElement"></canvas>
+    <canvas id="canvasElement" class="outline w-full"></canvas>
     <script>
         const videoElement = document.getElementById("videoElement");
         const canvasElement = document.getElementById("canvasElement")
         const ctx = canvasElement.getContext("2d");
-        navigator.mediaDevices.getUserMedia({video:true}).then((stream) => {
+        navigator.mediaDevices.getUserMedia({video: {facingMode: "environment"}}).then((stream) => {
             videoElement.srcObject = stream;
-            const FPS = 10;
-            let i = 0;
-            setInterval(() => {
-                console.log(i++)
-            }, 1000/FPS);
+            // const FPS = 10;
+            // let i = 0;
+            // setInterval(() => {
+            //     console.log(i++)
+            // }, 1000/FPS);
         }).catch(err => {
             document.body.textContent = "errore: " + err;
         })
