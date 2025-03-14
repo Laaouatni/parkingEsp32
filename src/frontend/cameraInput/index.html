@@ -8,10 +8,19 @@
     <!-- <script src="https://docs.opencv.org/4.11.0/opencv.js"></script> -->
   </head>
   <body class="p-2 grid">
-    <video class="w-full" autoplay></video>
+    <video id="videoElement" class="w-full" autoplay></video>
+    <canvas id="canvasElement"></canvas>
     <script>
+        const videoElement = document.getElementById("videoElement");
+        const canvasElement = document.getElementById("canvasElement")
+        const ctx = canvasElement.getContext("2d");
         navigator.mediaDevices.getUserMedia({video:true}).then((stream) => {
-            document.querySelector("video").srcObject = stream;
+            videoElement.srcObject = stream;
+            const FPS = 10;
+            let i = 0;
+            setInterval(() => {
+                console.log(i++)
+            }, 1000/FPS);
         }).catch(err => {
             document.body.textContent = "errore: " + err;
         })
