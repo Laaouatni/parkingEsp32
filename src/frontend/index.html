@@ -1,11 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>Document</title>
-</head>
-<body>
-    ciao
-</body>
+    <script>
+      const ipEsp32 = "192.168.204.49";
+      const ws = new WebSocket(`ws://${ipEsp32}/ws`);
+      ws.addEventListener("close", () => {
+        window.location.reload();
+      });
+
+      ws.addEventListener("message", (message) => {
+        const data = JSON.parse(message.data);
+        console.log(data);
+      });
+    </script>
+  </head>
+
+  <body>
+    <input type="text" oninput="ws.send(this.value)"/>
+  </body>
 </html>
