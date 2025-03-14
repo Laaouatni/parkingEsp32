@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <map>
 #include <WiFi.h>
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
-String         completeWsString = "";
+
+std::map<uint32_t, String> mapCompleteWsStrings;
 
 void setup() {
   Serial.begin(115200);
@@ -16,17 +18,32 @@ void setup() {
 
   ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg,
                 uint8_t *data, size_t len) {
+    uint32_t thisClientID = client->id();
+
+    const bool isFirstConnection = type == WS_EVT_CONNECT;
+    const bool isDisconnected    = type == WS_EVT_DISCONNECT;
+
+    if (isFirstConnection) {
+      mapCompleteWsStrings[thisClientID] = "";
+      return;
+    };
+
+    if (isDisconnected) {
+      mapCompleteWsStrings.erase(thisClientID);
+      return;
+    };
+
     const bool hasData = type == WS_EVT_DATA;
     if (!hasData) { return; }
-    
-    AwsFrameInfo *info                     = (AwsFrameInfo *) arg;
-    const String  thisWsReceivedStringData = String((char *) data).substring(0, len);
-    completeWsString += thisWsReceivedStringData;
+
+    const String thisWsReceivedStringData = String((char *) data).substring(0, len);
+    mapCompleteWsStrings[thisClientID] += thisWsReceivedStringData;
+
+    AwsFrameInfo *info = (AwsFrameInfo *) arg;
     if (!(info->final)) { return; };
 
-    ws.textAll(completeWsString);
-
-    completeWsString = "";
+    const String thisCompleteWsString = mapCompleteWsStrings[thisClientID];
+    ws.textAll(thisCompleteWsString);
   });
 
   server.addHandler(&ws);
