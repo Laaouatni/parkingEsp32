@@ -11,20 +11,20 @@ void setup() {
 
   WiFi.begin("nomeWifi", "passwordWifi");
   while (WiFi.status() != WL_CONNECTED) {};
-  Serial.println("WiFi connected! IP Address: " +
-                 WiFi.localIP().toString());
+  Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
 
-  ws.onEvent([](AsyncWebSocket       *server,
-                AsyncWebSocketClient *client,
-                AwsEventType type, void *arg, uint8_t *data,
-                size_t len) {
+  ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg,
+                uint8_t *data, size_t len) {
     const bool hasData = type == WS_EVT_DATA;
     if (!hasData) { return; }
-    
-    const String thisWsReceivedStringData =
-      String((char *) data).substring(0, len);
+    AwsFrameInfo *info                     = (AwsFrameInfo *) arg;
+    const String  thisWsReceivedStringData = String((char *) data).substring(0, len);
+    completeWsString += thisWsReceivedStringData;
+    if (!(info->final)) { return; };
 
-    Serial.println(thisWsReceivedStringData);
+    ws.textAll(completeWsString);
+
+    completeWsString = "";
 
     //   const bool isConnecting    = type ==
     //   WS_EVT_CONNECT; const bool isDisconnecting = type
