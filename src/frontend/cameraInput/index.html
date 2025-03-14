@@ -5,12 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://docs.opencv.org/4.11.0/opencv.js"></script>
+    <!-- <script src="https://docs.opencv.org/4.11.0/opencv.js"></script> -->
   </head>
-  <body>
-    ciao
+  <body class="p-2 grid">
+    <video class="w-full" autoplay></video>
     <script>
-        cv.then(console.log)
+        navigator.mediaDevices.getUserMedia({video:true}).then((stream) => {
+            document.querySelector("video").srcObject = stream;
+        }).catch(err => {
+            document.body.textContent = "errore: " + err;
+        })
     </script>
   </body>
 </html>
