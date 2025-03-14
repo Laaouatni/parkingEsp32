@@ -5,41 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- <script src="https://docs.opencv.org/4.11.0/opencv.js"></script> -->
+    <script src="https://docs.opencv.org/4.11.0/opencv.js"></script>
   </head>
   <body class="p-2 grid gap-4">
     <video id="videoElement" autoplay></video>
     <canvas id="canvasElement" class="outline"></canvas>
     <script>
-      const videoElement = document.getElementById("videoElement");
-      const canvasElement = document.getElementById("canvasElement");
-      const ctx = canvasElement.getContext("2d");
-      const DIMENSIONS = {
-        W: 300,
-        H: 300,
-      };
-      const FPS = 30;
-      [videoElement, canvasElement].forEach((thisHtmlElement) => {
-        thisHtmlElement.width = DIMENSIONS.W;
-        thisHtmlElement.height = DIMENSIONS.H;
+      cv.then((cv2) => {
+        const videoElement = document.getElementById("videoElement");
+        const canvasElement = document.getElementById("canvasElement");
+        const ctx = canvasElement.getContext("2d");
+        const DIMENSIONS = {
+          W: 300,
+          H: 300,
+        };
+        const FPS = 2;
+        [videoElement, canvasElement].forEach((thisHtmlElement) => {
+          thisHtmlElement.width = DIMENSIONS.W;
+          thisHtmlElement.height = DIMENSIONS.H;
+        });
+        navigator.mediaDevices
+          .getUserMedia({
+            video: {
+              facingMode: "environment",
+              width: DIMENSIONS.W,
+              height: DIMENSIONS.H,
+            },
+          })
+          .then((stream) => {
+            videoElement.srcObject = stream;
+            let i = 0;
+            setInterval(() => {
+              console.log(i++);
+              ctx.drawImage(videoElement, 0, 0, DIMENSIONS.W, DIMENSIONS.H);
+              let src = cv2.imread(canvasElement);
+              let dst = new cv2.Mat();
+              cv2.cvtColor(src, dst, cv2.COLOR_RGBA2GRAY);
+              cv2.imshow(canvasElement, dst);
+
+              //   console.log(src)
+            }, 1000 / FPS);
+          })
+          .catch((err) => console.error);
       });
-      navigator.mediaDevices
-        .getUserMedia({
-          video: {
-            facingMode: "environment",
-            width: DIMENSIONS.W,
-            height: DIMENSIONS.H,
-          },
-        })
-        .then((stream) => {
-          videoElement.srcObject = stream;
-          let i = 0;
-          setInterval(() => {
-            console.log(i++);
-            ctx.drawImage(videoElement, 0, 0, DIMENSIONS.W, DIMENSIONS.H);
-          }, 1000 / FPS);
-        })
-        .catch((err) => console.error);
     </script>
   </body>
 </html>
