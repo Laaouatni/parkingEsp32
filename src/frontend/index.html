@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Document</title>
     <script>
-      const ipEsp32 = "192.168.204.49";
+      const ipEsp32 = "192.168.143.3";
       const ws = new WebSocket(`ws://${ipEsp32}/ws`);
       ws.addEventListener("close", () => {
         window.location.reload();
@@ -19,7 +19,7 @@
     </script>
   </head>
 
-  <body>
-    <input type="text" oninput="ws.send(this.value)"/>
+  <body class="p-2">
+    <input class="border border-black rounded" type="text" oninput="ws.send(this.value)"/>
   </body>
 </html>
