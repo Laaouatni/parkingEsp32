@@ -77,26 +77,32 @@
         });
       });
 
-      function hasDifferentColorFromAverage(paramId, TOLLERANZA = 30) {
+      function hasDifferentColorFromAverage(paramId, GRAY_TOLLERANZA = 30) {
         let result = false;
         const data = ctx.getImageData(slotPositions[paramId].x, slotPositions[paramId].y, slotPositions[paramId].w, slotPositions[paramId].h).data;
+        let coloredPixelsCount = 0;
+        const totalPixels = data.length / 4;
+        const minColoredPixelRatio = 0.1; // 10%
         for (let i = 0; i < data.length; i += 4) {
           const r = data[i];
           const g = data[i + 1];
           const b = data[i + 2];
 
-          if (r < TOLLERANZA && g < TOLLERANZA && b < TOLLERANZA) continue;
-          const WHITE_TOLLERANZA = 255 - TOLLERANZA;
-          if(r>WHITE_TOLLERANZA && g > WHITE_TOLLERANZA && b > WHITE_TOLLERANZA) continue;
+          if (r < GRAY_TOLLERANZA && g < GRAY_TOLLERANZA && b < GRAY_TOLLERANZA) continue;
+          const WHITE_TOLLERANZA = 255 - GRAY_TOLLERANZA;
+          if (r > WHITE_TOLLERANZA && g > WHITE_TOLLERANZA && b > WHITE_TOLLERANZA) continue;
 
-          const avgColor = (r + g + b) / 3;
-          const rDiff = Math.abs(r - avgColor);
-          const gDiff = Math.abs(g - avgColor);
-          const bDiff = Math.abs(b - avgColor);
+          const rg_diff = Math.abs(r - g);
+          const rb_diff = Math.abs(r - b);
+          const gb_diff = Math.abs(g - b);
 
-          if (rDiff > TOLLERANZA || gDiff > TOLLERANZA || bDiff > TOLLERANZA) {
-            result = true;
-            break;
+          if (Math.max(rg_diff, rb_diff, gb_diff) > GRAY_TOLLERANZA) {
+            coloredPixelsCount++;
+
+            if(coloredPixelsCount / totalPixels > minColoredPixelRatio) {
+                result = true;
+                break;
+            }
           }
         }
         return result;
@@ -118,7 +124,7 @@
           ctx.drawImage(videoElement, 0, 0, mainElement.clientWidth, mainElement.clientHeight);
           allSlotsFlat.forEach((thisId) => {
             const hasMacchina = hasDifferentColorFromAverage(thisId);
-            const thisSlotElement = document.getElementById(thisId)
+            const thisSlotElement = document.getElementById(thisId);
             if (hasMacchina) {
               thisSlotElement.classList.add("border-red-500");
               thisSlotElement.classList.add("shadow-red-500");
