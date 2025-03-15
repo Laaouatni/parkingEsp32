@@ -8,7 +8,7 @@
     <script src="https://docs.opencv.org/4.11.0/opencv.js"></script>
   </head>
   <body class="p-2 grid gap-4">
-    <video id="videoElement" autoplay hidden></video>
+    <video id="videoElement" width="90" height="160" autoplay hidden></video>
     <canvas id="canvasElement" class="outline"></canvas>
     <script>
       cv.then((cv2) => {
@@ -16,18 +16,12 @@
         const canvasElement = document.getElementById("canvasElement");
         const ctx = canvasElement.getContext("2d");
         const FPS = 20;
-        const MULTIPLIER = 2;
-        const DIMENSIONS = { width: 210, height: 297 };
-
-        videoElement.width = DIMENSIONS.width;
-        videoElement.height = DIMENSIONS.height;
 
         navigator.mediaDevices
           .getUserMedia({
             video: {
               facingMode: "environment",
-              width: DIMENSIONS.width,
-              height: DIMENSIONS.height,
+              aspectRatio: 16/9
             },
           })
           .then((stream) => {
@@ -36,7 +30,6 @@
           .catch((err) => console.error);
 
         videoElement.addEventListener("playing", () => {
-          let i = 0;
           canvasElement.width = videoElement.width;
           canvasElement.height = videoElement.height;
           setInterval(() => {
