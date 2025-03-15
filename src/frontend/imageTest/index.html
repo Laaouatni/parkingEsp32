@@ -86,6 +86,8 @@
           const b = data[i + 2];
 
           if (r < TOLLERANZA && g < TOLLERANZA && b < TOLLERANZA) continue;
+          const WHITE_TOLLERANZA = 255 - TOLLERANZA;
+          if(r>WHITE_TOLLERANZA && g > WHITE_TOLLERANZA && b > WHITE_TOLLERANZA) continue;
 
           const avgColor = (r + g + b) / 3;
           const rDiff = Math.abs(r - avgColor);
