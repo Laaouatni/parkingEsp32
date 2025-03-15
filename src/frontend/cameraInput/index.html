@@ -3,44 +3,77 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Find Rectangles</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://docs.opencv.org/4.11.0/opencv.js"></script>
   </head>
   <body class="p-2 grid gap-4">
     <video id="videoElement" autoplay></video>
-    <canvas id="canvasElement" class="outline"></canvas>
+    <canvas id="canvasElement"></canvas>
     <script>
-      cv.then((cv2) => {
+      cv.then((cv) => {
         const videoElement = document.getElementById("videoElement");
         const canvasElement = document.getElementById("canvasElement");
         const ctx = canvasElement.getContext("2d");
-        const DIMENSIONS = {
-          W: 300,
-          H: 300,
-        };
-        const FPS = 1;
-        [videoElement, canvasElement].forEach((thisHtmlElement) => {
-          thisHtmlElement.width = DIMENSIONS.W;
-          thisHtmlElement.height = DIMENSIONS.H;
+        const MULTIPLIER = 10;
+        const DIMENSIONS = { W: (29.7*MULTIPLIER), H: (21*MULTIPLIER) };
+        const FPS = 10;
+
+        [videoElement, canvasElement].forEach((el) => {
+          el.width = DIMENSIONS.W;
+          el.height = DIMENSIONS.H;
         });
+
         navigator.mediaDevices
           .getUserMedia({
             video: {
               facingMode: "environment",
-              width: DIMENSIONS.W,
-              height: DIMENSIONS.H,
+              aspectRatio: (DIMENSIONS.W/DIMENSIONS.H),
             },
           })
           .then((stream) => {
             videoElement.srcObject = stream;
-            let i = 0;
-            setInterval(() => {
-              console.log(i++);
-              ctx.drawImage(videoElement, 0, 0, DIMENSIONS.W, DIMENSIONS.H);
-            }, 1000 / FPS);
+            setInterval(() => processFrame(), 1000 / FPS);
           })
-          .catch((err) => console.error);
+          .catch(console.error);
+
+        function processFrame() {
+          ctx.drawImage(videoElement, 0, 0, DIMENSIONS.H, DIMENSIONS.W);
+          let src = cv.imread(canvasElement);
+          let gray = new cv.Mat();
+          let edges = new cv.Mat();
+          let contours = new cv.MatVector();
+          let hierarchy = new cv.Mat();
+
+          cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY, 0);
+          cv.Canny(gray, edges, 50, 150, 3, false);
+          cv.findContours(edges, contours, hierarchy, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE);
+
+          let allRects = [];
+          for (let i = 0; i < contours.size(); i++) {
+            let cnt = contours.get(i);
+            let approx = new cv.Mat();
+            cv.approxPolyDP(cnt, approx, 0.02 * cv.arcLength(cnt, true), true);
+            if (approx.rows === 4) {
+              let rect = cv.boundingRect(cnt);
+              allRects.push(rect);
+              let point1 = new cv.Point(rect.x, rect.y);
+              let point2 = new cv.Point(rect.x + rect.width, rect.y + rect.height);
+              cv.rectangle(src, point1, point2, [255, 0, 0, 255], 2);
+            }
+            approx.delete();
+          }
+          if (allRects.length > 0) {
+            let minX = Math.min(...allRects.map(r => r.x));
+            let minY = Math.min(...allRects.map(r => r.y));
+            let maxX = Math.max(...allRects.map(r => r.x + r.width));
+            let maxY = Math.max(...allRects.map(r => r.y + r.height));
+            cv.rectangle(src, new cv.Point(minX, minY), new cv.Point(maxX, maxY), [0, 255, 0, 255], 3);
+          }
+
+          cv.imshow(canvasElement, src);
+          src.delete(); gray.delete(); edges.delete(); contours.delete(); hierarchy.delete();
+        }
       });
     </script>
   </body>
