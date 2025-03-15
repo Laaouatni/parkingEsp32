@@ -8,39 +8,40 @@
     <script src="https://docs.opencv.org/4.11.0/opencv.js"></script>
   </head>
   <body class="p-2 grid gap-4">
-    <video id="videoElement" autoplay></video>
+    <video id="videoElement" width="210px" height="297px" autoplay></video>
     <canvas id="canvasElement" class="outline"></canvas>
     <script>
       cv.then((cv2) => {
         const videoElement = document.getElementById("videoElement");
         const canvasElement = document.getElementById("canvasElement");
         const ctx = canvasElement.getContext("2d");
-        const MULTIPLIER = 10;
-        const DIMENSIONS = { W: (29.7*MULTIPLIER), H: (21*MULTIPLIER) };
-    
-        const FPS = 60;
-
-        [videoElement, canvasElement].forEach((thisHtmlElement) => {
-          thisHtmlElement.width = DIMENSIONS.W;
-          thisHtmlElement.height = DIMENSIONS.H;
-        });
+        const FPS = 20;
         navigator.mediaDevices
           .getUserMedia({
             video: {
               facingMode: "environment",
-              height: DIMENSIONS.H,
-              width: DIMENSIONS.W
             },
           })
           .then((stream) => {
             videoElement.srcObject = stream;
-            let i = 0;
-            setInterval(() => {
-              console.log(i++);
-              ctx.drawImage(videoElement, 0, 0, DIMENSIONS.W, DIMENSIONS.H);
-            }, 1000 / FPS);
           })
           .catch((err) => console.error);
+
+        videoElement.addEventListener("playing", () => {
+          let i = 0;
+          canvasElement.width = videoElement.width;
+          canvasElement.height = videoElement.height;
+          setInterval(() => {
+            // console.log(i++);
+            ctx.drawImage(
+              videoElement,
+              0,
+              0,
+              videoElement.width,
+              videoElement.height
+            );
+          }, 1000 / FPS);
+        });
       });
     </script>
   </body>
