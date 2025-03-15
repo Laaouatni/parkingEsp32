@@ -13,8 +13,9 @@
       }
     </style>
   </head>
-  <body class="grid place-items-center">
+  <body class="relative grid place-items-center">
     <video id="videoElement" autoplay hidden></video>
+    <div id="punto" class="h-2 w-2 bg-blue-500 fixed"></div>
     <main
     style="
         --multiplier: 1.4;
@@ -55,22 +56,31 @@
       const ctx = canvasElement.getContext("2d");
       const FPS = 10;
 
-      navigator.mediaDevices
-        .getUserMedia({
-          video: { facingMode: "environment" },
-        })
-        .then((stream) => {
-          videoElement.srcObject = stream;
-        })
-        .catch((err) => console.error);
+      console.log(getPositionFirstSlot());
+      
+      function getPositionFirstSlot() {
+        const firstSlot = document.querySelector("#slot-0-0");
+        const punto = document.querySelector("#punto");
+        punto.setAttribute("style", `top:${firstSlot.getBoundingClientRect().y}px; left:${firstSlot.getBoundingClientRect().x}px`)
+        return false;
+      }
 
-      videoElement.addEventListener("playing", () => {
-        canvasElement.width = mainElement.clientWidth;
-        canvasElement.height = mainElement.clientHeight;
-        setInterval(() => {
-          ctx.drawImage(videoElement, 0, 0, mainElement.clientWidth, mainElement.clientHeight);
-        }, 1000 / FPS);
-      });
+    //   navigator.mediaDevices
+    //     .getUserMedia({
+    //       video: { facingMode: "environment" },
+    //     })
+    //     .then((stream) => {
+    //       videoElement.srcObject = stream;
+    //     })
+    //     .catch((err) => console.error);
+
+    //   videoElement.addEventListener("playing", () => {
+    //     canvasElement.width = mainElement.clientWidth;
+    //     canvasElement.height = mainElement.clientHeight;
+    //     setInterval(() => {
+    //       ctx.drawImage(videoElement, 0, 0, mainElement.clientWidth, mainElement.clientHeight);
+    //     }, 1000 / FPS);
+    //   });
     </script>
   </body>
 </html>
