@@ -19,7 +19,7 @@
           W: 300,
           H: 300,
         };
-        const FPS = 60;
+        const FPS = 1;
         [videoElement, canvasElement].forEach((thisHtmlElement) => {
           thisHtmlElement.width = DIMENSIONS.W;
           thisHtmlElement.height = DIMENSIONS.H;
@@ -38,16 +38,6 @@
             setInterval(() => {
               console.log(i++);
               ctx.drawImage(videoElement, 0, 0, DIMENSIONS.W, DIMENSIONS.H);
-              let src = cv2.imread(canvasElement);
-              let gray = new cv2.Mat();
-              let binary = new cv2.Mat();
-              cv2.cvtColor(src, gray, cv2.COLOR_RGBA2GRAY);
-              cv2.threshold(gray, binary, 120, 255, cv2.TRESH_BINARY);
-              cv2.imshow(canvasElement, binary);
-              
-              [src, gray, binary].forEach(itemToDelete => itemToDelete.delete());
-
-              //   console.log(src)
             }, 1000 / FPS);
           })
           .catch((err) => console.error);
