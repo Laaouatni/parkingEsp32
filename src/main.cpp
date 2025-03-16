@@ -3,6 +3,7 @@
 #include <ESPAsyncWebServer.h>
 #include <map>
 #include <WiFi.h>
+#include <LittleFS.h>
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
@@ -15,6 +16,17 @@ void setup() {
   WiFi.begin("nomeWifi", "passwordWifi");
   while (WiFi.status() != WL_CONNECTED) {};
   Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
+
+  if(!LittleFS.begin()) {
+    Serial.print("LittleFS filesystem fail");
+    delay(1000);
+    ESP.restart();
+    return;
+  };
+
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send(LittleFS, "/index.html", "text/html");
+  });
 
   ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg,
                 uint8_t *data, size_t len) {

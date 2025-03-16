@@ -4,10 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script>
-    const IP_ESP32 = "192.168.252.3";
-  </script>
+  <title>ESP32 Parking Camera Input</title>
 </head>
 
 <body>
@@ -129,7 +126,7 @@
     }
   </style>
   <script>
-    const ws = new WebSocket(`ws://${IP_ESP32}/ws`);
+    const ws = new WebSocket(`ws://${window.location.host}/ws`);
     ws.addEventListener("close", () => {
       window.location.reload();
     });
