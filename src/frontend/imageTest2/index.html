@@ -38,20 +38,45 @@
     <script>
       const parkingViewElement = document.getElementById("parkingViewElement");
       const canvasElement = document.getElementById("canvasElement");
-      const parkingItems = document.querySelectorAll(".parkingItem");
+
+      const parkingGroups = {
+        sinistra: document.getElementById("parkingGroupSinistra"),
+        alto: document.getElementById("parkingGroupAlto"),
+        destra: document.getElementById("parkingGroupDestra"),
+      };
+      const parkingItems = {
+        all: document.querySelectorAll(".parkingItem"),
+      }
+
+      Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
+        parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
+      })
+
+      console.log(parkingItems)
 
       const parkingItemConfig = {
         parkingSlotSize: {
           width: 30,
           height: 60,
         },
-        get spessoreBordo() { return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10 }
+        get spessoreBordo() {
+          return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10;
+        },
       };
 
-      console.log(parkingItemConfig.spessoreBordo)
+      parkingItems.forEach((thisParkingItemElement) => {
+        const classString = `shadow-inner border-[length:${parkingItemConfig.spessoreBordo}px]`;
+        const spreadString = classString.split(" ");
+        thisParkingItemElement.classList.add(...spreadString);
+      });
 
+      parkingGroups.sinistra.querySelectorAll(".parkingItem").forEach((thisParkingItemElement) => {
+        const classString = ``;
+        const spreadString = classString.split(" ");
+        thisParkingItemElement.classList.add()
+      })
 
-    //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
+      //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
 
       const ctx = canvasElement.getContext("2d", {
         alpha: false,
@@ -69,7 +94,8 @@
         .then(async (stream) => {
           const videoTrack = stream.getVideoTracks()[0];
           if (!window.MediaStreamTrackProcessor) {
-            document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
+            document.body.textContent =
+              "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
             return;
           }
           const processor = new MediaStreamTrackProcessor({ track: videoTrack });
