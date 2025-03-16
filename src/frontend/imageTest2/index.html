@@ -11,19 +11,19 @@
 <body>
   <main id="parkingViewElement">
     <canvas id="canvasElement"></canvas>
-    <div class="parkingGroup" id="parkingGroupSinistra">
+    <div class="parkingGroup grid" id="parkingGroupSinistra">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
     </div>
-    <div class="parkingGroup" id="parkingGroupAlto">
+    <div class="parkingGroup flex" id="parkingGroupAlto">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
     </div>
-    <div class="parkingGroup" id="parkingGroupDestra">
+    <div class="parkingGroup grid" id="parkingGroupDestra">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
@@ -61,7 +61,8 @@
 
     .parkingItem {
       border-width: var(--slotSpessoreBordo);
-      padding: var(--slotPadding)
+      padding: var(--slotPadding);
+      border-color: var(--slotColor);
     }
 
     #parkingGroupSinistra.parkingItem,
