@@ -39,21 +39,6 @@
       const parkingViewElement = document.getElementById("parkingViewElement");
       const canvasElement = document.getElementById("canvasElement");
 
-      const parkingGroups = {
-        sinistra: document.getElementById("parkingGroupSinistra"),
-        alto: document.getElementById("parkingGroupAlto"),
-        destra: document.getElementById("parkingGroupDestra"),
-      };
-      const parkingItems = {
-        all: document.querySelectorAll(".parkingItem"),
-      }
-
-      Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
-        parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
-      })
-
-      console.log(parkingItems)
-
       const parkingItemConfig = {
         parkingSlotSize: {
           width: 30,
@@ -64,16 +49,36 @@
         },
       };
 
-      parkingItems.forEach((thisParkingItemElement) => {
+      const parkingGroups = {
+        sinistra: document.getElementById("parkingGroupSinistra"),
+        alto: document.getElementById("parkingGroupAlto"),
+        destra: document.getElementById("parkingGroupDestra"),
+      };
+
+      const parkingItems = {
+        all: document.querySelectorAll(".parkingItem"),
+      };
+      Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
+        parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
+      });
+
+
+      parkingItems.all.forEach((thisParkingItemElement) => {
         const classString = `shadow-inner border-[length:${parkingItemConfig.spessoreBordo}px]`;
         const spreadString = classString.split(" ");
         thisParkingItemElement.classList.add(...spreadString);
       });
 
-      parkingGroups.sinistra.querySelectorAll(".parkingItem").forEach((thisParkingItemElement) => {
-        const classString = ``;
+      [parkingItems.sinistra, parkingItems.destra].flat().forEach((thisParkingItemElement) => {
+        
+        const classString = `w-[${parkingItemConfig.parkingSlotSize.height}] h-[${parkingItemConfig.parkingSlotSize.width}]`;
         const spreadString = classString.split(" ");
-        thisParkingItemElement.classList.add()
+        thisParkingItemElement.classList.add(...spreadString);
+
+      })
+
+      parkingItems.alto.forEach((thisParkingItemElement) => {
+
       })
 
       //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
