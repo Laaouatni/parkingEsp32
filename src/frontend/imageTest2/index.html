@@ -11,6 +11,10 @@
         width: 100%;
         height: 100%;
       }
+
+      #parkingViewElement {
+        
+      }
     </style>
   </head>
   <body>
@@ -39,47 +43,47 @@
       const parkingViewElement = document.getElementById("parkingViewElement");
       const canvasElement = document.getElementById("canvasElement");
 
-      const parkingItemConfig = {
-        parkingSlotSize: {
-          width: 30,
-          height: 60,
-        },
-        get spessoreBordo() {
-          return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10;
-        },
-      };
+    //   const parkingItemConfig = {
+    //     parkingSlotSize: {
+    //       width: 30,
+    //       height: 60,
+    //     },
+    //     get spessoreBordo() {
+    //       return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10;
+    //     },
+    //   };
 
-      const parkingGroups = {
-        sinistra: document.getElementById("parkingGroupSinistra"),
-        alto: document.getElementById("parkingGroupAlto"),
-        destra: document.getElementById("parkingGroupDestra"),
-      };
+    //   const parkingGroups = {
+    //     sinistra: document.getElementById("parkingGroupSinistra"),
+    //     alto: document.getElementById("parkingGroupAlto"),
+    //     destra: document.getElementById("parkingGroupDestra"),
+    //   };
 
-      const parkingItems = {
-        all: document.querySelectorAll(".parkingItem"),
-      };
-      Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
-        parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
-      });
+    //   const parkingItems = {
+    //     all: document.querySelectorAll(".parkingItem"),
+    //   };
+    //   Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
+    //     parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
+    //   });
 
 
-      parkingItems.all.forEach((thisParkingItemElement) => {
-        const classString = `shadow-inner border-[length:${parkingItemConfig.spessoreBordo}px]`;
-        const spreadString = classString.split(" ");
-        thisParkingItemElement.classList.add(...spreadString);
-      });
+    //   parkingItems.all.forEach((thisParkingItemElement) => {
+    //     const classString = `shadow-inner border-[length:${parkingItemConfig.spessoreBordo}px]`;
+    //     const spreadString = classString.split(" ");
+    //     thisParkingItemElement.classList.add(...spreadString);
+    //   });
 
-      [parkingItems.sinistra, parkingItems.destra].flat().forEach((thisParkingItemElement) => {
-        
-        const classString = `w-[${parkingItemConfig.parkingSlotSize.height}] h-[${parkingItemConfig.parkingSlotSize.width}]`;
-        const spreadString = classString.split(" ");
-        thisParkingItemElement.classList.add(...spreadString);
+    //   [parkingItems.sinistra, parkingItems.destra].flat().forEach((thisParkingItemElement) => {
 
-      })
+    //     const classString = `w-[${parkingItemConfig.parkingSlotSize.height}] h-[${parkingItemConfig.parkingSlotSize.width}]`;
+    //     const spreadString = classString.split(" ");
+    //     thisParkingItemElement.classList.add(...spreadString);
 
-      parkingItems.alto.forEach((thisParkingItemElement) => {
+    //   })
 
-      })
+    //   parkingItems.alto.forEach((thisParkingItemElement) => {
+
+    //   })
 
       //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
 
