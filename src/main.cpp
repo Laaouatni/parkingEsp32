@@ -5,6 +5,14 @@
 #include <WiFi.h>
 #include <LittleFS.h>
 
+/*
+  RICORDA DI SCRIVERE QUESTO COMMANDO:
+
+  pio run --target uploadfs --verbose
+  
+  PRIMA DI COMPILARE TRAMITE IL BUTTONE BUILD
+*/
+
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
 
