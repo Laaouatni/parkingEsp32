@@ -58,7 +58,6 @@
         })
         .then(async (stream) => {
           const videoTrack = stream.getVideoTracks()[0];
-          console.log(videoTrack.getCapabilities(), videoTrack.getSettings());
           if (!window.MediaStreamTrackProcessor) {
             document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
             return;
@@ -66,29 +65,22 @@
           const processor = new MediaStreamTrackProcessor({ track: videoTrack });
           const reader = processor.readable.getReader();
           let ms = Date.now();
-          while(true) {
-            const t0 = Date.now();
-            const { value: frame, done } = await reader.read();
-            const t1 = Date.now();
-            console.log(t1-t0);
-            if(done) break;
-            frame.close();
-          }
-        //   drawThisFrame();
 
-        //   async function drawThisFrame() {
-        //     const { value: frame, done } = await reader.read();
-        //     if (done) return;
-        //     ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
-        //     totalImgThisSecond++;
-        //     frame.close();
-        //     if (Date.now() - ms >= 1000) {
-        //       fpsElement.textContent = `${totalImgThisSecond} fps`;
-        //       totalImgThisSecond = 0;
-        //       ms = Date.now();
-        //     }
-        //     drawThisFrame();
-        //   }
+          drawThisFrame();
+
+          async function drawThisFrame() {
+            const { value: frame, done } = await reader.read();
+            if (done) return;
+            ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
+            totalImgThisSecond++;
+            frame.close();
+            drawThisFrame();
+            if (Date.now() - ms >= 1000) {
+              fpsElement.textContent = `${totalImgThisSecond} fps`;
+              totalImgThisSecond = 0;
+              ms = Date.now();
+            }
+          }
         });
     </script>
   </body>
