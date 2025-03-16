@@ -66,11 +66,11 @@
           const processor = new MediaStreamTrackProcessor({ track: videoTrack });
           const reader = processor.readable.getReader();
           let ms = Date.now();
+          drawThisFrame();
 
-          while (true) {
+          async function drawThisFrame() {
             const { value: frame, done } = await reader.read();
-            if (done) break;
-
+            if (done) return;
             ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
             totalImgThisSecond++;
             frame.close();
@@ -79,27 +79,8 @@
               totalImgThisSecond = 0;
               ms = Date.now();
             }
+            drawThisFrame();
           }
-          //   drawThisFrame();
-
-          //   async function drawThisFrame() {
-          //     const { value: frame, done } = await reader.read();
-          //     if (done) return;
-          //     ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
-          //     totalImgThisSecond++;
-          //     frame.close();
-          //     if (Date.now() - ms >= 1000) {
-          //       fpsElement.textContent = `${totalImgThisSecond} fps`;
-          //       totalImgThisSecond = 0;
-          //       ms = Date.now();
-          //     }
-          //     drawThisFrame();
-          //   }
-          // while(true) {
-          //     const {value:thisFrame, done} = await reader.read();
-          //     if(done) break;
-          //     ctx.
-          // }
         });
     </script>
   </body>
