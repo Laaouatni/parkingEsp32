@@ -43,8 +43,9 @@
       --parkingViewHeight: calc(210px * var(--multiplier));
       --slotWidth: calc(30px * var(--multiplier));
       --slotHeight: calc(60px * var(var(--multiplier)));
-      --spessoreBordo: calc(calc((min(var(--slotWidth), var(--slotHeight))/10))*var(var(--multiplier))) --margin: calc(10px * var(var(--multiplier)));
-      --parkingColor: red;
+      --slotPadding: calc(10px * var(var(--multiplier)));
+      --slotSpessoreBordo: calc(min(var(--slotWidth), var(--slotHeight))/10)*var(var(--multiplier));
+      --slotColor: red;
 
       width: var(--parkingViewWidth);
       height: var(--parkingViewHeight);
@@ -58,6 +59,11 @@
       z-index: 0;
     }
 
+    .parkingItem {
+      border-width: var(--slotSpessoreBordo);
+      padding: var(--slotPadding)
+    }
+
     #parkingGroupSinistra.parkingItem,
     #parkingGroupDestra.parkingItem {
       width: var(--slotHeight);
@@ -65,17 +71,17 @@
     }
 
     #parkingGroupSinistra.parkingItem {
-      border-right: var(--spessoreBordo);
+      border-right: var(--slotSpessoreBordo);
     }
 
     #parkingGroupAlto.parkingItem {
-      border-bottom: var(--spessoreBordo);
+      border-bottom: var(--slotSpessoreBordo);
       width: var(--slotWidth);
       height: var(--slotHeight);
     }
 
     #parkingGroupSinistra.parkingItem {
-      border-left: var(--spessoreBordo);
+      border-left: var(--slotSpessoreBordo);
     }
   </style>
   <script>
