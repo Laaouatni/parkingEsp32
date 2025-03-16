@@ -14,21 +14,21 @@
     </style>
   </head>
   <body>
-    <main id="parkingViewElement" style="width: 297px; height: 210px" class="relative z-10">
+    <main id="parkingViewElement" class="relative z-10 w-[297px] h-[210px]">
       <canvas id="canvasElement" class="absolute z-0"></canvas>
-      <div class="parkingGroup">
+      <div class="parkingGroup" id="parkingGroupSinistra">
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
       </div>
-      <div class="parkingGroup">
+      <div class="parkingGroup" id="parkingGroupAlto">
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
       </div>
-      <div class="parkingGroup">
+      <div class="parkingGroup" id="parkingGroupDestra">
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
@@ -39,7 +39,20 @@
       const parkingViewElement = document.getElementById("parkingViewElement");
       const canvasElement = document.getElementById("canvasElement");
       const parkingItems = document.querySelectorAll(".parkingItem");
-      
+
+      const parkingItemConfig = {
+        parkingSlotSize: {
+          width: 30,
+          height: 60,
+        },
+        get spessoreBordo() { return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10 }
+      };
+
+      console.log(parkingItemConfig.spessoreBordo)
+
+
+    //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
+
       const ctx = canvasElement.getContext("2d", {
         alpha: false,
         desynchronized: true,
@@ -72,7 +85,7 @@
             if (done) return;
             ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
             frame.close();
-            
+
             drawThisFrame();
           }
         });
