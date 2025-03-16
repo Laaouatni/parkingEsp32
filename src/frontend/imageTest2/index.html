@@ -13,8 +13,35 @@
     </style>
 </head>
 <body>
-    <main class="relative z-10">
+    <main id="parkingViewElement" class="relative z-10">
         <canvas id="canvasElement" class="absolute z-0"></canvas>
+        <div class="parkingGroup">
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+        </div>
+        <div class="parkingGroup">
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+        </div>
+        <div class="parkingGroup">
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+            <div class="parkingItem"></div>
+        </div>
     </main>
+    <script>
+        const parkingViewElement = document.getElementById("parkingViewElement");
+        const canvasElement = document.getElementById("canvasElement");
+        const ctx = canvasElement.getContext("2d", {
+            alpha: false,
+            desynchronized: true,
+            willReadFrequently: true
+        });
+    </script>
 </body>
 </html>
