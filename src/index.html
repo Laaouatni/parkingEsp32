@@ -5,7 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
-  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+  <script>
+    const IP_ESP32 = "192.168.143.3";
+  </script>
 </head>
 
 <body>
@@ -119,6 +121,12 @@
     }
   </style>
   <script>
+    const ws = new WebSocket(`ws://${IP_ESP32}/ws`);
+    ws.addEventListener("close", () => {
+      window.location.reload();
+    });
+  </script>
+  <script>
     const parkingViewElement = document.getElementById("parkingViewElement");
     const parkingViewElementStyles = parkingViewElement.getBoundingClientRect();
     const canvasElement = document.getElementById("canvasElement");
@@ -211,6 +219,12 @@
             thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`);
             thisFrameArrayToSendToEsp32[thisParkingItemIndex] = isOccupied ? "1" : "0";
           });
+
+          const isWSconnected = ws.readyState === WebSocket.OPEN;
+          (() => {
+            if(!isWSconnected) return;
+            ws.send(thisFrameArrayToSendToEsp32.join(","));
+          })();
 
           drawThisFrame();
         }
