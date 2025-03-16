@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <main id="parkingViewElement">
+  <main id="parkingViewElement" class="flex justify-between">
     <canvas id="canvasElement"></canvas>
     <div class="parkingGroup grid" id="parkingGroupSinistra">
       <div class="parkingItem"></div>
@@ -60,28 +60,29 @@
     }
 
     .parkingItem {
+      z-index: 2;
       border-width: var(--slotSpessoreBordo);
       padding: var(--slotPadding);
       border-color: var(--slotColor);
     }
 
-    #parkingGroupSinistra.parkingItem,
-    #parkingGroupDestra.parkingItem {
+    #parkingGroupSinistra .parkingItem,
+    #parkingGroupDestra .parkingItem {
       width: var(--slotHeight);
       height: var(--slotWidth);
     }
 
-    #parkingGroupSinistra.parkingItem {
+    #parkingGroupSinistra .parkingItem {
       border-right: var(--slotSpessoreBordo);
     }
 
-    #parkingGroupAlto.parkingItem {
+    #parkingGroupAlto .parkingItem {
       border-bottom: var(--slotSpessoreBordo);
       width: var(--slotWidth);
       height: var(--slotHeight);
     }
 
-    #parkingGroupSinistra.parkingItem {
+    #parkingGroupSinistra .parkingItem {
       border-left: var(--slotSpessoreBordo);
     }
   </style>
@@ -93,7 +94,7 @@
 
     parkingItems.forEach((thisParkingItem) => {
       thisParkingItem.classList.add(..."shadow-inner".split(" "));
-      thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
+      // thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
     });
 
     const ctx = canvasElement.getContext("2d", {
