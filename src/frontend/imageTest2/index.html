@@ -42,6 +42,17 @@
             desynchronized: true,
             willReadFrequently: true
         });
+        const parkingItems = document.querySelectorAll(".parkingItem");
+
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" }
+        }).then(async (stream) => {
+            const videoTrack = stream.getVideoTracks()[0];
+            if(!(window.MediaStreamTrackProcessor)) {
+                document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
+                return;
+            }
+        })
     </script>
 </body>
 </html>
