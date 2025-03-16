@@ -1,121 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-      html,
-      body {
-        width: 100%;
-        height: 100%;
-      }
 
-      #parkingViewElement {
-        --multiplier: 1.0;
-        --parkingViewWidth: 297px;
-        --parkingViewHeight: 210px;
-        --slotWidth: calc(30px * var(--multiplier));
-        --slotHeight: calc(60px * var(var(--multiplier)));
-        --spessoreBordo: calc(calc((min(var(--slotWidth), var(--slotHeight))/10))*var(var(--multiplier)))
-        --margin: calc(10px * var(var(--multiplier)));
-        --parkingColor: red;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
 
-        position: relative;
-        z-index:1;
+<body>
+  <main id="parkingViewElement">
+    <canvas id="canvasElement"></canvas>
+    <div class="parkingGroup" id="parkingGroupSinistra">
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+    </div>
+    <div class="parkingGroup" id="parkingGroupAlto">
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+    </div>
+    <div class="parkingGroup" id="parkingGroupDestra">
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+      <div class="parkingItem"></div>
+    </div>
+  </main>
+  <script>
+    const parkingViewElement = document.getElementById("parkingViewElement");
+    const canvasElement = document.getElementById("canvasElement");
 
-        width: 297px;
-        height: 210px;
-      }
+    const parkingItems = document.querySelectorAll(".parkingItem");
 
-      #canvasElement {
-        position: absolute;
-        z-index: 0;
-      }
+    parkingItems.forEach((thisParkingItem) => {
+      thisParkingItem.classList.add(..."shadow-inner".split(" "));
+      thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
+    });
 
-      #parkingGroupSinistra.parkingItem,
-      #parkingGroupDestra.parkingItem {
-        width: var(--slotHeight);
-        height: var(--slotWidth);
-      }
+    const ctx = canvasElement.getContext("2d", {
+      alpha: false,
+      desynchronized: true,
+      willReadFrequently: true,
+    });
 
-      #parkingGroupAlto.parkingItem {
-        width: var(--slotWidth);
-        height: var(--slotHeight);
-      }
-    </style>
-  </head>
-  <body>
-    <main id="parkingViewElement">
-      <canvas id="canvasElement"></canvas>
-      <div class="parkingGroup" id="parkingGroupSinistra">
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-      </div>
-      <div class="parkingGroup" id="parkingGroupAlto">
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-      </div>
-      <div class="parkingGroup" id="parkingGroupDestra">
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-        <div class="parkingItem"></div>
-      </div>
-    </main>
-    <script>
-      const parkingViewElement = document.getElementById("parkingViewElement");
-      const canvasElement = document.getElementById("canvasElement");
+    navigator.mediaDevices
+      .getUserMedia({
+        video: {
+          facingMode: "environment",
+          aspectRatio: parkingViewElement.clientWidth / parkingViewElement.clientHeight,
+        },
+      })
+      .then(async (stream) => {
+        const videoTrack = stream.getVideoTracks()[0];
+        if (!window.MediaStreamTrackProcessor) {
+          document.body.textContent =
+            "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
+          return;
+        }
+        const processor = new MediaStreamTrackProcessor({ track: videoTrack });
+        const reader = processor.readable.getReader();
 
-      const parkingItems = document.querySelectorAll(".parkingItem");
+        canvasElement.width = parkingViewElement.clientWidth;
+        canvasElement.height = parkingViewElement.clientHeight;
 
-      parkingItems.forEach((thisParkingItem) => {
-        thisParkingItem.classList.add(..."shadow-inner".split(" "));
-        thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
-      });
+        drawThisFrame();
 
-      const ctx = canvasElement.getContext("2d", {
-        alpha: false,
-        desynchronized: true,
-        willReadFrequently: true,
-      });
-
-      navigator.mediaDevices
-        .getUserMedia({
-          video: {
-            facingMode: "environment",
-            aspectRatio: parkingViewElement.clientWidth / parkingViewElement.clientHeight,
-          },
-        })
-        .then(async (stream) => {
-          const videoTrack = stream.getVideoTracks()[0];
-          if (!window.MediaStreamTrackProcessor) {
-            document.body.textContent =
-              "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
-            return;
-          }
-          const processor = new MediaStreamTrackProcessor({ track: videoTrack });
-          const reader = processor.readable.getReader();
-
-          canvasElement.width = parkingViewElement.clientWidth;
-          canvasElement.height = parkingViewElement.clientHeight;
+        async function drawThisFrame() {
+          const { value: frame, done } = await reader.read();
+          if (done) return;
+          ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
+          frame.close();
 
           drawThisFrame();
+        }
+      });
+  </script>
+  <style>
+    #parkingViewElement {
+      --multiplier: 1.0;
+      --parkingViewWidth: 297px;
+      --parkingViewHeight: 210px;
+      --slotWidth: calc(30px * var(--multiplier));
+      --slotHeight: calc(60px * var(var(--multiplier)));
+      --spessoreBordo: calc(calc((min(var(--slotWidth), var(--slotHeight))/10))*var(var(--multiplier))) --margin: calc(10px * var(var(--multiplier)));
+      --parkingColor: red;
 
-          async function drawThisFrame() {
-            const { value: frame, done } = await reader.read();
-            if (done) return;
-            ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
-            frame.close();
+      width: 297px;
+      height: 210px;
+    }
 
-            drawThisFrame();
-          }
-        });
-    </script>
-  </body>
+    #canvasElement {
+      position: absolute;
+      z-index: 0;
+    }
+
+    #parkingViewElement {
+      position: relative;
+      z-index: 1;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+    }
+
+    #parkingGroupSinistra.parkingItem,
+    #parkingGroupDestra.parkingItem {
+      width: var(--slotHeight);
+      height: var(--slotWidth);
+    }
+
+    #parkingGroupAlto.parkingItem {
+      width: var(--slotWidth);
+      height: var(--slotHeight);
+    }
+
+    #parkingGroupSinistra.parkingItem {
+      border-right: var(--spessoreBordo);
+    }
+
+    #parkingGroupAlto.parkingItem {
+      border-bottom: var(--spessoreBordo);
+    }
+
+    #parkingGroupSinistra.parkingItem {
+      border-left: var(--spessoreBordo);
+    }
+  </style>
+
+</body>
+
 </html>
