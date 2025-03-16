@@ -54,6 +54,7 @@
       --slotHeight: calc(60px * var(--multiplier));
       --slotPadding: calc(16px * var(--multiplier));
       --slotSpessoreBordo: calc((min(var(--slotWidth), var(--slotHeight))/10)*var(--multiplier));
+      --slotRadius: calc(var(--slotSpessoreBordo)*2);
       --slotColor: red;
 
       display: flex;
@@ -101,20 +102,20 @@
     }
 
     #parkingGroupSinistra .parkingItem {
-      border-top-right-radius: var(--slotSpessoreBordo);
-      border-bottom-right-radius: var(--slotSpessoreBordo);
+      border-top-right-radius: var(--slotRadius);
+      border-bottom-right-radius: var(--slotRadius);
     }
 
     #parkingGroupAlto .parkingItem {
-      border-bottom-left-radius: var(--slotSpessoreBordo);
-      border-bottom-right-radius: var(--slotSpessoreBordo);
+      border-bottom-left-radius: var(--slotRadius);
+      border-bottom-right-radius: var(--slotRadius);
       width: var(--slotWidth);
       height: var(--slotHeight);
     }
 
     #parkingGroupDestra .parkingItem {
-      border-top-left-radius: var(--slotSpessoreBordo);
-      border-bottom-left-radius: var(--slotSpessoreBordo);
+      border-top-left-radius: var(--slotRadius);
+      border-bottom-left-radius: var(--slotRadius);
     }
   </style>
   <script>
