@@ -20,15 +20,35 @@
         --slotHeight: calc(60px * var(var(--multiplier)));
         --spessoreBordo: calc(calc((min(var(--slotWidth), var(--slotHeight))/10))*var(var(--multiplier)))
         --margin: calc(10px * var(var(--multiplier)));
+        --parkingColor: red;
+
+        position: relative;
+        z-index:1;
 
         width: 297px;
         height: 210px;
       }
+
+      #canvasElement {
+        position: absolute;
+        z-index: 0;
+      }
+
+      #parkingGroupSinistra.parkingItem,
+      #parkingGroupDestra.parkingItem {
+        width: var(--slotHeight);
+        height: var(--slotWidth);
+      }
+
+      #parkingGroupAlto.parkingItem {
+        width: var(--slotWidth);
+        height: var(--slotHeight);
+      }
     </style>
   </head>
   <body>
-    <main id="parkingViewElement" class="relative z-10">
-      <canvas id="canvasElement" class="absolute z-0"></canvas>
+    <main id="parkingViewElement">
+      <canvas id="canvasElement"></canvas>
       <div class="parkingGroup" id="parkingGroupSinistra">
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
@@ -56,51 +76,8 @@
 
       parkingItems.forEach((thisParkingItem) => {
         thisParkingItem.classList.add(..."shadow-inner".split(" "));
-        thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)}`);
+        thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
       });
-
-      //   const parkingItemConfig = {
-      //     parkingSlotSize: {
-      //       width: 30,
-      //       height: 60,
-      //     },
-      //     get spessoreBordo() {
-      //       return Math.min(this.parkingSlotSize.height, this.parkingSlotSize.width) / 10;
-      //     },
-      //   };
-
-      //   const parkingGroups = {
-      //     sinistra: document.getElementById("parkingGroupSinistra"),
-      //     alto: document.getElementById("parkingGroupAlto"),
-      //     destra: document.getElementById("parkingGroupDestra"),
-      //   };
-
-      //   const parkingItems = {
-      //     all: document.querySelectorAll(".parkingItem"),
-      //   };
-      //   Object.entries(parkingGroups).forEach(([name, thisParkingGroup]) => {
-      //     parkingItems[name] = thisParkingGroup.querySelectorAll(".parkingItem");
-      //   });
-
-      //   parkingItems.all.forEach((thisParkingItemElement) => {
-      //     const classString = `shadow-inner border-[length:${parkingItemConfig.spessoreBordo}px]`;
-      //     const spreadString = classString.split(" ");
-      //     thisParkingItemElement.classList.add(...spreadString);
-      //   });
-
-      //   [parkingItems.sinistra, parkingItems.destra].flat().forEach((thisParkingItemElement) => {
-
-      //     const classString = `w-[${parkingItemConfig.parkingSlotSize.height}] h-[${parkingItemConfig.parkingSlotSize.width}]`;
-      //     const spreadString = classString.split(" ");
-      //     thisParkingItemElement.classList.add(...spreadString);
-
-      //   })
-
-      //   parkingItems.alto.forEach((thisParkingItemElement) => {
-
-      //   })
-
-      //   parkingItems.setAttribute("style", `${parkingItems.getAttribute("style")}`);
 
       const ctx = canvasElement.getContext("2d", {
         alpha: false,
