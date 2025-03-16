@@ -81,8 +81,16 @@
 
     #parkingGroupSinistra,
     #parkingGroupDestra {
-      display: grid;
-      align-content: end;
+      display: flex;
+    }
+
+    #parkingGroupSinistra {
+      flex-direction: column-reverse;
+    }
+
+    #parkingGroupDestra {
+      flex-direction: column;
+      align-self: end;
     }
 
     #parkingGroupAlto {
