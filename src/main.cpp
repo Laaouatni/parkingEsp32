@@ -43,7 +43,7 @@ void setup() {
     if (!(info->final)) { return; };
 
     const String thisCompleteWsString = mapCompleteWsStrings[thisClientID];
-    ws.textAll(thisCompleteWsString);
+    Serial.println(thisCompleteWsString);
 
     mapCompleteWsStrings[thisClientID] = "";
   });
