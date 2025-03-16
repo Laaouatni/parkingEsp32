@@ -163,6 +163,8 @@
         canvasElement.width = parkingViewElement.clientWidth;
         canvasElement.height = parkingViewElement.clientHeight;
 
+        let previousFrameArrayToSendToEsp32String = "";
+
         drawThisFrame();
 
         async function drawThisFrame() {
@@ -223,7 +225,11 @@
           const isWSconnected = ws.readyState === WebSocket.OPEN;
           (() => {
             if(!isWSconnected) return;
-            ws.send(thisFrameArrayToSendToEsp32.join(","));
+            const thisFrameArrayToSendToEsp32String = thisFrameArrayToSendToEsp32.join(",");
+            const canSend = thisFrameArrayToSendToEsp32String != previousFrameArrayToSendToEsp32String;
+            if(!canSend) return;
+            ws.send(thisFrameArrayToSendToEsp32String);
+            previousFrameArrayToSendToEsp32String = thisFrameArrayToSendToEsp32String;
           })();
 
           drawThisFrame();
