@@ -162,8 +162,9 @@
           if (done) return;
           ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
           frame.close();
+          let thisFrameArrayToSendToEsp32 = [];
 
-          parkingItems.forEach((thisParkingItem) => {
+          parkingItems.forEach((thisParkingItem, thisParkingItemIndex) => {
             const thisParkingItemStyles = thisParkingItem.getBoundingClientRect();
             const thisParkingItemPositionData = {
               x: thisParkingItemStyles.x - parkingViewElementStyles.x,
@@ -207,7 +208,8 @@
               isOccupied = true;
               break;
             }
-            thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`)
+            thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`);
+            thisFrameArrayToSendToEsp32[thisParkingItemIndex] = isOccupied ? "1" : "0";
           });
 
           drawThisFrame();
