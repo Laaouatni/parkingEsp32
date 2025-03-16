@@ -9,21 +9,21 @@
 </head>
 
 <body>
-  <main id="parkingViewElement" class="flex justify-between">
+  <main id="parkingViewElement">
     <canvas id="canvasElement"></canvas>
-    <div class="parkingGroup grid" id="parkingGroupSinistra">
+    <div class="parkingGroup" id="parkingGroupSinistra">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
     </div>
-    <div class="parkingGroup flex" id="parkingGroupAlto">
+    <div class="parkingGroup" id="parkingGroupAlto">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
     </div>
-    <div class="parkingGroup grid" id="parkingGroupDestra">
+    <div class="parkingGroup" id="parkingGroupDestra">
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
       <div class="parkingItem"></div>
@@ -31,21 +31,31 @@
     </div>
   </main>
   <style>
+    *,
+    ::after,
+    ::before {
+      box-sizing: border-box;
+    }
+
     html,
     body {
       width: 100%;
       height: 100%;
+      margin: 0;
     }
 
     #parkingViewElement {
-      --multiplier: 1.0;
+      --multiplier: 1.2;
       --parkingViewWidth: calc(297px * var(--multiplier));
       --parkingViewHeight: calc(210px * var(--multiplier));
       --slotWidth: calc(30px * var(--multiplier));
-      --slotHeight: calc(60px * var(var(--multiplier)));
-      --slotPadding: calc(10px * var(var(--multiplier)));
-      --slotSpessoreBordo: calc(min(var(--slotWidth), var(--slotHeight))/10)*var(var(--multiplier));
+      --slotHeight: calc(60px * var(--multiplier));
+      --slotPadding: calc(10px * var(--multiplier));
+      --slotSpessoreBordo: calc(min(var(--slotWidth), var(--slotHeight))/10)*var(--multiplier);
       --slotColor: red;
+
+      display: flex;
+      justify-content: space-between;
 
       width: var(--parkingViewWidth);
       height: var(--parkingViewHeight);
@@ -57,6 +67,21 @@
     #canvasElement {
       position: absolute;
       z-index: 0;
+    }
+
+    .parkingGroup {
+      z-index: 2;
+      gap: var(--slotPadding)
+    }
+
+    #parkingGroupSinistra,
+    #parkingGroupDestra {
+      display: grid;
+      align-content: end;
+    }
+
+    #parkingGroupAlto {
+      display: flex;
     }
 
     .parkingItem {
@@ -73,17 +98,20 @@
     }
 
     #parkingGroupSinistra .parkingItem {
-      border-right: var(--slotSpessoreBordo);
+      border-top-right-radius: var(--slotSpessoreBordo);
+      border-bottom-right-radius: var(--slotSpessoreBordo);
     }
 
     #parkingGroupAlto .parkingItem {
-      border-bottom: var(--slotSpessoreBordo);
+      border-bottom-left-radius: var(--slotSpessoreBordo);
+      border-bottom-right-radius: var(--slotSpessoreBordo);
       width: var(--slotWidth);
       height: var(--slotHeight);
     }
 
-    #parkingGroupSinistra .parkingItem {
-      border-left: var(--slotSpessoreBordo);
+    #parkingGroupDestra .parkingItem {
+      border-top-left-radius: var(--slotSpessoreBordo);
+      border-bottom-left-radius: var(--slotSpessoreBordo);
     }
   </style>
   <script>
@@ -94,7 +122,6 @@
 
     parkingItems.forEach((thisParkingItem) => {
       thisParkingItem.classList.add(..."shadow-inner".split(" "));
-      // thisParkingItem.setAttribute("style", `${thisParkingItem.getAttribute(thisParkingItem)};`);
     });
 
     const ctx = canvasElement.getContext("2d", {
