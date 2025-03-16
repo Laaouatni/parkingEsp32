@@ -14,6 +14,8 @@
     </style>
   </head>
   <body class="relative grid place-items-center">
+    <div id="fpsElement"></div>
+    
     <video id="videoElement" autoplay hidden></video>
     <!-- <div id="punto" class="h-2 w-2 bg-blue-500 fixed"></div> -->
     <main
@@ -99,9 +101,9 @@
           if (Math.max(rg_diff, rb_diff, gb_diff) > GRAY_TOLLERANZA) {
             coloredPixelsCount++;
 
-            if(coloredPixelsCount / totalPixels > minColoredPixelRatio) {
-                result = true;
-                break;
+            if (coloredPixelsCount / totalPixels > minColoredPixelRatio) {
+              result = true;
+              break;
             }
           }
         }
@@ -120,7 +122,11 @@
       videoElement.addEventListener("playing", () => {
         canvasElement.width = mainElement.clientWidth;
         canvasElement.height = mainElement.clientHeight;
+        let ms = Date.now();
+        let totalImgThisSecond = 0;
+        
         setInterval(() => {
+          totalImgThisSecond++;
           ctx.drawImage(videoElement, 0, 0, mainElement.clientWidth, mainElement.clientHeight);
           allSlotsFlat.forEach((thisId) => {
             const hasMacchina = hasDifferentColorFromAverage(thisId);
@@ -137,6 +143,11 @@
               thisSlotElement.classList.remove("shadow-red-500");
             }
           });
+          if (Date.now() - ms >= 1000) {
+            fpsElement.textContent = `${totalImgThisSecond} fps`;
+            totalImgThisSecond = 0;
+            ms = Date.now();
+          }
         }, 1000 / FPS);
       });
     </script>
