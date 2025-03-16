@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 </head>
 
 <body>
@@ -44,6 +44,11 @@
       margin: 0;
     }
 
+    body {
+      place-items: center;
+      display: grid;
+    }
+
     #parkingViewElement {
       --multiplier: 1.2;
       --parkingViewWidth: calc(297px * var(--multiplier));
@@ -51,7 +56,7 @@
       --slotWidth: calc(30px * var(--multiplier));
       --slotHeight: calc(60px * var(--multiplier));
       --slotPadding: calc(10px * var(--multiplier));
-      --slotSpessoreBordo: calc(min(var(--slotWidth), var(--slotHeight))/10)*var(--multiplier);
+      --slotSpessoreBordo: calc((min(var(--slotWidth), var(--slotHeight))/10)*var(--multiplier));
       --slotColor: red;
 
       display: flex;
@@ -87,6 +92,7 @@
     .parkingItem {
       z-index: 2;
       border-width: var(--slotSpessoreBordo);
+      border-style: solid;
       padding: var(--slotPadding);
       border-color: var(--slotColor);
     }
