@@ -15,9 +15,8 @@
     </style>
   </head>
   <body>
-    <div id="fpsElement">0fps</div>
     <main id="parkingViewElement" class="relative z-10">
-      <canvas id="canvasElement" class="absolute z-0"></canvas>
+      <canvas id="canvasElement" width="297" height="210" class="absolute z-0"></canvas>
       <div class="parkingGroup">
         <div class="parkingItem"></div>
         <div class="parkingItem"></div>
@@ -64,7 +63,6 @@
           }
           const processor = new MediaStreamTrackProcessor({ track: videoTrack });
           const reader = processor.readable.getReader();
-          let ms = Date.now();
 
           drawThisFrame();
 
@@ -72,14 +70,8 @@
             const { value: frame, done } = await reader.read();
             if (done) return;
             ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
-            totalImgThisSecond++;
             frame.close();
             drawThisFrame();
-            if (Date.now() - ms >= 1000) {
-              fpsElement.textContent = `${totalImgThisSecond} fps`;
-              totalImgThisSecond = 0;
-              ms = Date.now();
-            }
           }
         });
     </script>
