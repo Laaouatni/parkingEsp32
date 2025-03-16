@@ -15,7 +15,7 @@
   </head>
   <body class="relative grid place-items-center">
     <div id="fpsElement"></div>
-    
+
     <video id="videoElement" autoplay hidden></video>
     <!-- <div id="punto" class="h-2 w-2 bg-blue-500 fixed"></div> -->
     <main
@@ -124,8 +124,10 @@
         canvasElement.height = mainElement.clientHeight;
         let ms = Date.now();
         let totalImgThisSecond = 0;
-        
-        setInterval(() => {
+        recuriveDraw()
+
+        function recuriveDraw() {
+          console.log(totalImgThisSecond)
           totalImgThisSecond++;
           ctx.drawImage(videoElement, 0, 0, mainElement.clientWidth, mainElement.clientHeight);
           allSlotsFlat.forEach((thisId) => {
@@ -147,8 +149,10 @@
             fpsElement.textContent = `${totalImgThisSecond} fps`;
             totalImgThisSecond = 0;
             ms = Date.now();
+            return;
           }
-        }, 1000 / FPS);
+          recuriveDraw();
+        }
       });
     </script>
   </body>
