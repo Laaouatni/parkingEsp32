@@ -1,92 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        html, body {
-            width: 100%;
-            height: 100%;
-            /* background-color: red; */
-        }
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        /* background-color: red; */
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div id="fpsElement"></div>
     <main id="parkingViewElement" class="relative z-10">
-        <canvas id="canvasElement" class="absolute z-0"></canvas>
-        <div class="parkingGroup">
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-        </div>
-        <div class="parkingGroup">
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-        </div>
-        <div class="parkingGroup">
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-            <div class="parkingItem"></div>
-        </div>
+      <canvas id="canvasElement" class="absolute z-0"></canvas>
+      <div class="parkingGroup">
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+      </div>
+      <div class="parkingGroup">
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+      </div>
+      <div class="parkingGroup">
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+        <div class="parkingItem"></div>
+      </div>
     </main>
     <script>
-        let totalImgThisSecond = 0;
-        const parkingViewElement = document.getElementById("parkingViewElement");
-        const canvasElement = document.getElementById("canvasElement");
-        const fpsElement = document.getElementById("fpsElement");
-        const ctx = canvasElement.getContext("2d", {
-            alpha: false,
-            desynchronized: true,
-            willReadFrequently: true
-        });
-        const parkingItems = document.querySelectorAll(".parkingItem");
-        
-        navigator.mediaDevices.getUserMedia({
-            video: { 
-                facingMode: "environment",
-                // width: 297,
-                // height: 210,
-                aspectRatio: 297/210,
-                frameRate: { ideal: 30}
-            }
-        }).then(async (stream) => {
-            const videoTrack = stream.getVideoTracks()[0];
-            console.log(videoTrack.getCapabilities(), videoTrack.getSettings());
-            if(!(window.MediaStreamTrackProcessor)) {
-                document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
-                return;
-            }
-            const processor = new MediaStreamTrackProcessor({ track: videoTrack });
-            const reader = processor.readable.getReader();
-            let ms = Date.now();
-            drawThisFrame();
+      let totalImgThisSecond = 0;
+      const parkingViewElement = document.getElementById("parkingViewElement");
+      const canvasElement = document.getElementById("canvasElement");
+      const fpsElement = document.getElementById("fpsElement");
+      const ctx = canvasElement.getContext("2d", {
+        alpha: false,
+        desynchronized: true,
+        willReadFrequently: true,
+      });
+      const parkingItems = document.querySelectorAll(".parkingItem");
 
-            async function drawThisFrame() {
-                const { value: frame, done} = await reader.read();
-                if(done) return;
-                ctx.drawImage(frame, 0,0, canvasElement.width, canvasElement.height);
-                totalImgThisSecond++;
-                frame.close();
-                if(Date.now() - ms >= 1000) {
-                    fpsElement.textContent = `${totalImgThisSecond} fps`
-                    totalImgThisSecond = 0;
-                    ms = Date.now();
-                };
-                drawThisFrame();
-            };
-            // while(true) {
-            //     const {value:thisFrame, done} = await reader.read();
-            //     if(done) break;
-            //     ctx.
-            // }
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            facingMode: "environment",
+            aspectRatio: 297 / 210,
+          },
         })
+        .then(async (stream) => {
+          const videoTrack = stream.getVideoTracks()[0];
+          console.log(videoTrack.getCapabilities(), videoTrack.getSettings());
+          if (!window.MediaStreamTrackProcessor) {
+            document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
+            return;
+          }
+          const processor = new MediaStreamTrackProcessor({ track: videoTrack });
+          const reader = processor.readable.getReader();
+          let ms = Date.now();
+
+          while (true) {
+            const { value: frame, done } = await reader.read();
+            if (done) break;
+
+            ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
+            totalImgThisSecond++;
+            frame.close();
+            if (Date.now() - ms >= 1000) {
+              fpsElement.textContent = `${totalImgThisSecond} fps`;
+              totalImgThisSecond = 0;
+              ms = Date.now();
+            }
+          }
+          //   drawThisFrame();
+
+          //   async function drawThisFrame() {
+          //     const { value: frame, done } = await reader.read();
+          //     if (done) return;
+          //     ctx.drawImage(frame, 0, 0, canvasElement.width, canvasElement.height);
+          //     totalImgThisSecond++;
+          //     frame.close();
+          //     if (Date.now() - ms >= 1000) {
+          //       fpsElement.textContent = `${totalImgThisSecond} fps`;
+          //       totalImgThisSecond = 0;
+          //       ms = Date.now();
+          //     }
+          //     drawThisFrame();
+          //   }
+          // while(true) {
+          //     const {value:thisFrame, done} = await reader.read();
+          //     if(done) break;
+          //     ctx.
+          // }
+        });
     </script>
-</body>
+  </body>
 </html>
