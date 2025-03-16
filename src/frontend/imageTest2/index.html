@@ -9,6 +9,7 @@
         html, body {
             width: 100%;
             height: 100%;
+            /* background-color: red; */
         }
     </style>
 </head>
@@ -45,13 +46,32 @@
         const parkingItems = document.querySelectorAll(".parkingItem");
 
         navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }
+            video: { 
+                facingMode: "environment",
+                aspectRatio: 297/210
+            }
         }).then(async (stream) => {
             const videoTrack = stream.getVideoTracks()[0];
             if(!(window.MediaStreamTrackProcessor)) {
                 document.body.textContent = "Aggiorna il browser o utilizza un altro browser. `window.MediaStreamTrackProcessor` non è disponibile. per dettagli vedi: https://caniuse.com/?search=mediastreamtrackprocessor";
                 return;
             }
+            const processor = new MediaStreamTrackProcessor({ track: videoTrack });
+            const reader = processor.readable.getReader();
+            drawThisFrame();
+
+            async function drawThisFrame() {
+                const { value: frame, done} = await reader.read();
+                if(done) return;
+                ctx.drawImage(frame, 0,0, canvasElement.width, canvasElement.height)
+                frame.close();
+                drawThisFrame();
+            };
+            // while(true) {
+            //     const {value:thisFrame, done} = await reader.read();
+            //     if(done) break;
+            //     ctx.
+            // }
         })
     </script>
 </body>
