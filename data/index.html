@@ -103,7 +103,7 @@
       font-family: Helvetica;
       display: grid;
       place-content: center;
-      font-size: var(--slotRadius);
+      font-size: calc(var(--slotWidth)/5);
       font-weight: bolder;
       color: var(--slotColor)
     }
@@ -232,7 +232,7 @@
             const thisColoredRatio = coloredPixelsCount / totalPixels;
             const isOccupied = thisColoredRatio > MIN_COLORED_RATIO;
             thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`);
-            thisParkingItem.textContent = `${(thisColoredRatio * 100).toFixed(2)}%`
+            thisParkingItem.textContent = `${(thisColoredRatio/MIN_COLORED_RATIO * 100).toFixed(2)}%`
             thisFrameArrayToSendToEsp32[thisParkingItemIndex] = isOccupied ? "1" : "0";
           });
 
