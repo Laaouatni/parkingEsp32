@@ -177,12 +177,13 @@
         let previousFrameArrayToSendToEsp32String = "";
 
         const tolleranzeColori = {
-          colori: 20,
-          bianco: 220,
-          nero: 40
+          GENERALE: 30,
+          get colori() { return this.GENERALE },
+          get bianco() { return 255 - this.GENERALE },
+          get nero() { return this.GENERALE }
         };
 
-        const MIN_COLORED_RATIO = 10/100;
+        const MIN_COLORED_RATIO = 10 / 100;
 
         drawThisFrame();
 
@@ -206,23 +207,32 @@
             let coloredPixelsCount = 0;
 
             for (let i = 0; i < thisParkingItemData.length; i += 4) {
-              const thisRGB = {
+              const thisRgbObject = {
                 r: thisParkingItemData[i],
                 g: thisParkingItemData[i + 1],
                 b: thisParkingItemData[i + 2]
               };
+              const thisRgbArray = [thisRgbObject.r, thisRgbObject.g, thisRgbObject.b];
 
-              const isGrigio = [Math.abs(thisRGB.r - thisRGB.g), Math.abs(thisRGB.g - thisRGB.b)].every((thisMathAbs) => thisMathAbs < tolleranzeColori.colori);
-              const isBianco = [thisRGB.r, thisRGB.g, thisRGB.b].every(thisColorValue => thisColorValue > tolleranzeColori.bianco);
-              const isNero = [thisRGB.r, thisRGB.g, thisRGB.b].every(thisColorValue => thisColorValue < tolleranzeColori.nero);
+              const maxDiff = Math.max(
+                Math.abs(thisRgbArray[0] - thisRgbArray[1]),
+                Math.abs(thisRgbArray[1] - thisRgbArray[2]),
+                Math.abs(thisRgbArray[2] - thisRgbArray[0])
+              );
+
+              const isGrigio = maxDiff < tolleranzeColori.colori;
+              const isBianco = thisRgbArray.every(thisColorValue => thisColorValue > tolleranzeColori.bianco);
+              const isNero = thisRgbArray.every(thisColorValue => thisColorValue < tolleranzeColori.nero);
+
               const canIgnoreColor = isGrigio || isBianco || isNero;
-              if(canIgnoreColor) continue;
+              if (canIgnoreColor) continue;
+
               coloredPixelsCount++;
             };
             const thisColoredRatio = coloredPixelsCount / totalPixels;
             const isOccupied = thisColoredRatio > MIN_COLORED_RATIO;
             thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`);
-            thisParkingItem.textContent = `${(thisColoredRatio*100).toFixed(2)}%`
+            thisParkingItem.textContent = `${(thisColoredRatio * 100).toFixed(2)}%`
             thisFrameArrayToSendToEsp32[thisParkingItemIndex] = isOccupied ? "1" : "0";
           });
 
