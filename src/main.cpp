@@ -25,9 +25,13 @@ std::map<uint32_t, String> mapCompleteWsStrings;
 void setup() {
   Serial.begin(115200);
 
-  WiFi.begin("nomeWifi", "passwordWifi");
-  while (WiFi.status() != WL_CONNECTED) {};
-  Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
+  // WiFi.begin("nomeWifi", "passwordWifi");
+  // while (WiFi.status() != WL_CONNECTED) {};
+  // Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
+  
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP("nomeWifi", "passwordWifi");
+  Serial.println("WiFi connected! IP hostpot Address: " + WiFi.softAPIP().toString());
 
   if(!LittleFS.begin()) {
     Serial.print("LittleFS filesystem fail");
