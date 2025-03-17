@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include <LittleFS.h>
 #include <map>
 #include <WiFi.h>
-#include <LittleFS.h>
 
 /*
   RICORDA DI SCRIVERE QUESTO COMMANDO:
@@ -14,7 +14,7 @@
 /*
   IN CHROME, ATTIVA:
   chrome://flags/#unsafely-treat-insecure-origin-as-secure
-  INSERENDO HTTP://192.168.xx.x CHE TROVI NEL SERIAL MONITOR
+  INSERENDO http://192.168.1.0 CHE TROVI NEL SERIAL MONITOR
 */
 
 AsyncWebServer server(80);
@@ -25,22 +25,26 @@ std::map<uint32_t, String> mapCompleteWsStrings;
 void setup() {
   Serial.begin(115200);
 
-  // WiFi.begin("nomeWifi", "passwordWifi");
-  // while (WiFi.status() != WL_CONNECTED) {};
-  // Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
-  
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP("nomeWifi", "passwordWifi");
-  Serial.println("WiFi connected! IP hostpot Address: " + WiFi.softAPIP().toString());
+  // IPAddress addressLocalIP(192,168,1,100);
+  // IPAddress addressGateway(192,168,1,1);
+  // IPAddress addressSubnet(255,255,255,0);
 
-  if(!LittleFS.begin()) {
+  // WiFi.config(addressLocalIP, addressGateway, addressSubnet);
+
+  WiFi.begin("nomeWifi", "passwordWifi");
+  while (WiFi.status() != WL_CONNECTED) {};
+  Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
+  Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
+                 "subnet: " + WiFi.subnetMask().toString());
+
+  if (!LittleFS.begin()) {
     Serial.print("LittleFS filesystem fail");
     delay(1000);
     ESP.restart();
     return;
   };
 
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
     request->send(LittleFS, "/index.html", "text/html");
   });
 
