@@ -100,6 +100,12 @@
       border-style: solid;
       border-color: var(--slotColor);
       padding: var(--slotPadding);
+      font-family: Helvetica;
+      display: grid;
+      place-content: center;
+      font-size: var(--slotRadius);
+      font-weight: bolder;
+      color: var(--slotColor)
     }
 
     #parkingGroupSinistra .parkingItem,
@@ -170,6 +176,14 @@
 
         let previousFrameArrayToSendToEsp32String = "";
 
+        const tolleranzeColori = {
+          colori: 20,
+          bianco: 220,
+          nero: 40
+        };
+
+        const MIN_COLORED_RATIO = 10/100;
+
         drawThisFrame();
 
         async function drawThisFrame() {
@@ -188,51 +202,36 @@
               h: thisParkingItemStyles.height
             }
             const thisParkingItemData = ctx.getImageData(thisParkingItemPositionData.x, thisParkingItemPositionData.y, thisParkingItemPositionData.w, thisParkingItemPositionData.h).data;
-            let isOccupied = false;
             let totalPixels = thisParkingItemData.length / 4;
             let coloredPixelsCount = 0;
-            const thisLogicConfiguration = {
-              TOLLERANZA_GRAY: 30,
-              get TOLLERANZA_WHITE() {
-                return 255 - this.TOLLERANZA_GRAY;
-              },
-              MIN_COLORED_RATIO: 0.1 //10%
-            };
+
             for (let i = 0; i < thisParkingItemData.length; i += 4) {
-              const r = thisParkingItemData[i];
-              const g = thisParkingItemData[i + 1];
-              const b = thisParkingItemData[i + 2];
-
-              const isBlackToIgnore = [r, g, b].every(thisColorValue => thisColorValue < thisLogicConfiguration.TOLLERANZA_GRAY);
-              const isWhiteToIgnore = [r, g, b].every(thisColorValue => thisColorValue > thisLogicConfiguration.TOLLERANZA_WHITE);
-              if (isBlackToIgnore || isWhiteToIgnore) continue;
-
-              const colorDifferences = {
-                RG: Math.abs(r - g),
-                RB: Math.abs(r - b),
-                GB: Math.abs(g - b),
+              const thisRGB = {
+                r: thisParkingItemData[i],
+                g: thisParkingItemData[i + 1],
+                b: thisParkingItemData[i + 2]
               };
 
-              const hasHugeColorDifference = Math.max(colorDifferences.RG, colorDifferences.RB, colorDifferences.GB) > thisLogicConfiguration.TOLLERANZA_GRAY;
-              if (!hasHugeColorDifference) continue;
-
+              const isGrigio = [Math.abs(thisRGB.r - thisRGB.g), Math.abs(thisRGB.g - thisRGB.b)].every((thisMathAbs) => thisMathAbs < tolleranzeColori.colori);
+              const isBianco = [thisRGB.r, thisRGB.g, thisRGB.b].every(thisColorValue => thisColorValue > tolleranzeColori.bianco);
+              const isNero = [thisRGB.r, thisRGB.g, thisRGB.b].every(thisColorValue => thisColorValue < tolleranzeColori.nero);
+              const canIgnoreColor = isGrigio || isBianco || isNero;
+              if(canIgnoreColor) continue;
               coloredPixelsCount++;
-              const foundEnoughColoredPixels = (coloredPixelsCount / totalPixels) > thisLogicConfiguration.MIN_COLORED_RATIO;
-              if (!foundEnoughColoredPixels) continue;
-
-              isOccupied = true;
-              break;
-            }
+            };
+            const thisColoredRatio = coloredPixelsCount / totalPixels;
+            const isOccupied = thisColoredRatio > MIN_COLORED_RATIO;
             thisParkingItem.setAttribute("style", `--slotColor: ${isOccupied ? "red" : "green"}`);
+            thisParkingItem.textContent = `${(thisColoredRatio*100).toFixed(2)}%`
             thisFrameArrayToSendToEsp32[thisParkingItemIndex] = isOccupied ? "1" : "0";
           });
 
           const isWSconnected = ws.readyState === WebSocket.OPEN;
           (() => {
-            if(!isWSconnected) return;
+            if (!isWSconnected) return;
             const thisFrameArrayToSendToEsp32String = thisFrameArrayToSendToEsp32.join(",");
             const canSend = thisFrameArrayToSendToEsp32String != previousFrameArrayToSendToEsp32String;
-            if(!canSend) return;
+            if (!canSend) return;
             ws.send(thisFrameArrayToSendToEsp32String);
             previousFrameArrayToSendToEsp32String = thisFrameArrayToSendToEsp32String;
           })();
