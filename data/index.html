@@ -234,6 +234,9 @@
 
                 const canIgnoreColor = isGrigio || isBianco || isNero;
                 if (canIgnoreColor) continue;
+                const thisColoredRatio = coloredPixelsCount / totalPixels;
+                const isOccupied = thisColoredRatio >= CONFIGURAZIONE.MIN_COLORED_RATIO;
+                if(isOccupied) break;
 
                 coloredPixelsCount++;
               };
