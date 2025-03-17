@@ -14,7 +14,7 @@
 /*
   IN CHROME, ATTIVA:
   chrome://flags/#unsafely-treat-insecure-origin-as-secure
-  INSERENDO http://192.168.1.0 CHE TROVI NEL SERIAL MONITOR
+  INSERENDO http://192.168.252.0/ CHE TROVI NEL SERIAL MONITOR
 */
 
 AsyncWebServer server(80);
@@ -25,17 +25,17 @@ std::map<uint32_t, String> mapCompleteWsStrings;
 void setup() {
   Serial.begin(115200);
 
-  // IPAddress addressLocalIP(192,168,1,100);
-  // IPAddress addressGateway(192,168,1,1);
-  // IPAddress addressSubnet(255,255,255,0);
+  IPAddress addressLocalIP(192,168,252,0);
+  IPAddress addressGateway(192,168,252,156);
+  IPAddress addressSubnet(255,255,255,0);
 
-  // WiFi.config(addressLocalIP, addressGateway, addressSubnet);
+  WiFi.config(addressLocalIP, addressGateway, addressSubnet);
 
   WiFi.begin("nomeWifi", "passwordWifi");
   while (WiFi.status() != WL_CONNECTED) {};
   Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
-  Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
-                 "subnet: " + WiFi.subnetMask().toString());
+  // Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
+  //                "subnet: " + WiFi.subnetMask().toString());
 
   if (!LittleFS.begin()) {
     Serial.print("LittleFS filesystem fail");
