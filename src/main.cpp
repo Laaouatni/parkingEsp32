@@ -7,10 +7,14 @@
 
 /*
   RICORDA DI SCRIVERE QUESTO COMMANDO:
-
   pio run --target uploadfs --verbose
-  
   PRIMA DI COMPILARE TRAMITE IL BUTTONE BUILD
+*/
+
+/*
+  IN CHROME, ATTIVA:
+  chrome://flags/#unsafely-treat-insecure-origin-as-secure
+  INSERENDO HTTP://192.168.xx.x CHE TROVI NEL SERIAL MONITOR
 */
 
 AsyncWebServer server(80);
