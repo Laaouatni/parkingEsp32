@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script>
+    const serverUrl = "";
+    const ws = new WebSocket(`ws://${serverUrl}/ws`);
+    ws.addEventListener("open", () => {
+      console.log("WebSocket connection established.");
+    });
+    ws.addEventListener("close", () => {
+      window.location.reload();
+    });
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
