@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "id": "esp32",
+  "type": "wokwi-esp32-devkit-v1",
+  "author": "Il tuo nome",
+  "editor": "wokwi",
+  "parts": [],
+  "connections": []
+}
