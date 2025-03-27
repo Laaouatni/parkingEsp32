@@ -1,9 +1,8 @@
 {
   "version": 1,
-  "id": "esp32",
-  "type": "wokwi-esp32-devkit-v1",
-  "author": "Il tuo nome",
+  "author": "Laaouatni Anas",
   "editor": "wokwi",
-  "parts": [],
-  "connections": []
+  "parts": [ { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} } ],
+  "connections": [ [ "esp:TX", "$serialMonitor:RX", "", [] ], [ "esp:RX", "$serialMonitor:TX", "", [] ] ],
+  "dependencies": {}
 }
