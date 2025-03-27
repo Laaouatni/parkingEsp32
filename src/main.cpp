@@ -6,93 +6,78 @@
 #include <map>
 #include <WiFi.h>
 
+
+/*
+  RICORDA DI SCRIVERE QUESTO COMMANDO:
+  pio run --target uploadfs --verbose
+  PRIMA DI COMPILARE TRAMITE IL BUTTONE BUILD
+*/
+
+/*
+  IN CHROME, ATTIVA:
+  chrome://flags/#unsafely-treat-insecure-origin-as-secure
+  INSERENDO http://192.168.252.0/ CHE TROVI NEL SERIAL MONITOR
+*/
+
+AsyncWebServer server(80);
+AsyncWebSocket ws("/ws");
+
+std::map<uint32_t, String> mapCompleteWsStrings;
+
 void setup() {
   Serial.begin(115200);
-  Serial.println("Hello World!");
-}
-void loop() {
-  delay(1000);
-  Serial.println("Hello World!");
-}
+  Serial.println("Starting...");
+  WiFi.begin("nomeWifi", "passwordWifi");
+  while (WiFi.status() != WL_CONNECTED) {};
+  Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
+  // Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
+  //                "subnet: " + WiFi.subnetMask().toString());
 
+  if (!LittleFS.begin()) {
+    Serial.print("LittleFS filesystem fail");
+    delay(1000);
+    ESP.restart();
+    return;
+  };
 
-// /*
-//   RICORDA DI SCRIVERE QUESTO COMMANDO:
-//   pio run --target uploadfs --verbose
-//   PRIMA DI COMPILARE TRAMITE IL BUTTONE BUILD
-// */
+  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
+    request->send(LittleFS, "/index.html", "text/html");
+  });
 
-// /*
-//   IN CHROME, ATTIVA:
-//   chrome://flags/#unsafely-treat-insecure-origin-as-secure
-//   INSERENDO http://192.168.252.0/ CHE TROVI NEL SERIAL MONITOR
-// */
+  ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg,
+                uint8_t *data, size_t len) {
+    uint32_t thisClientID = client->id();
 
-// AsyncWebServer server(80);
-// AsyncWebSocket ws("/ws");
+    const bool isFirstConnection = type == WS_EVT_CONNECT;
+    const bool isDisconnected    = type == WS_EVT_DISCONNECT;
 
-// std::map<uint32_t, String> mapCompleteWsStrings;
+    if (isFirstConnection) {
+      mapCompleteWsStrings[thisClientID] = "";
+      return;
+    };
 
-// void setup() {
-//   Serial.begin(115200);
+    if (isDisconnected) {
+      mapCompleteWsStrings.erase(thisClientID);
+      return;
+    };
 
-//   IPAddress addressLocalIP(192,168,252,0);
-//   IPAddress addressGateway(192,168,252,156);
-//   IPAddress addressSubnet(255,255,255,0);
+    const bool hasData = type == WS_EVT_DATA;
+    if (!hasData) { return; }
 
-//   WiFi.config(addressLocalIP, addressGateway, addressSubnet);
+    const String thisWsReceivedStringData = String((char *) data).substring(0, len);
+    mapCompleteWsStrings[thisClientID] += thisWsReceivedStringData;
 
-//   WiFi.begin("nomeWifi", "passwordWifi");
-//   while (WiFi.status() != WL_CONNECTED) {};
-//   Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
-//   // Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
-//   //                "subnet: " + WiFi.subnetMask().toString());
+    AwsFrameInfo *info = (AwsFrameInfo *) arg;
+    if (!(info->final)) { return; };
 
-//   if (!LittleFS.begin()) {
-//     Serial.print("LittleFS filesystem fail");
-//     delay(1000);
-//     ESP.restart();
-//     return;
-//   };
+    const String thisCompleteWsString = mapCompleteWsStrings[thisClientID];
+    Serial.println(thisCompleteWsString);
 
-//   server.on("/", HTTP_GET, [](AsyncWebServerRequest *request) {
-//     request->send(LittleFS, "/index.html", "text/html");
-//   });
+    mapCompleteWsStrings[thisClientID] = "";
+  });
 
-//   ws.onEvent([](AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg,
-//                 uint8_t *data, size_t len) {
-//     uint32_t thisClientID = client->id();
+  server.addHandler(&ws);
+  server.begin();
+};
 
-//     const bool isFirstConnection = type == WS_EVT_CONNECT;
-//     const bool isDisconnected    = type == WS_EVT_DISCONNECT;
-
-//     if (isFirstConnection) {
-//       mapCompleteWsStrings[thisClientID] = "";
-//       return;
-//     };
-
-//     if (isDisconnected) {
-//       mapCompleteWsStrings.erase(thisClientID);
-//       return;
-//     };
-
-//     const bool hasData = type == WS_EVT_DATA;
-//     if (!hasData) { return; }
-
-//     const String thisWsReceivedStringData = String((char *) data).substring(0, len);
-//     mapCompleteWsStrings[thisClientID] += thisWsReceivedStringData;
-
-//     AwsFrameInfo *info = (AwsFrameInfo *) arg;
-//     if (!(info->final)) { return; };
-
-//     const String thisCompleteWsString = mapCompleteWsStrings[thisClientID];
-//     Serial.println(thisCompleteWsString);
-
-//     mapCompleteWsStrings[thisClientID] = "";
-//   });
-
-//   server.addHandler(&ws);
-//   server.begin();
-// };
-
-// void loop() {};
+void loop() {};
