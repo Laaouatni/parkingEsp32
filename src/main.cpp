@@ -27,7 +27,7 @@ std::map<uint32_t, String> mapCompleteWsStrings;
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting...");
-  WiFi.begin("nomeWifi", "passwordWifi");
+  WiFi.begin("Wokwi-GUEST", "", 6);
   while (WiFi.status() != WL_CONNECTED) {};
   Serial.println("WiFi connected! IP Address: " + WiFi.localIP().toString());
   // Serial.println("Gateway:" + WiFi.gatewayIP().toString() + "\t" +
